@@ -3,21 +3,9 @@
  * with some modifications as it will evolve in the future and we need control over this parser
  * to iterate faster.
  */
-const { XMLParser } = require("fast-xml-parser");
-const axios = require("axios");
 
-const rssParser = async (url) => {
-	const { data } = await axios(url);
-
-	const xml = new XMLParser({
-		attributeNamePrefix: "",
-		textNodeName: "$text",
-		ignoreAttributes: false,
-	});
-
-	const result = xml.parse(data);
-
-	let channel = result.rss?.channel ? result.rss.channel : result.feed;
+const rssParser = (data, feedURL) => {
+	let channel = data.rss?.channel ? data.rss.channel : data.feed;
 	if (Array.isArray(channel)) channel = channel[0];
 
 	let link = channel.link && channel.link.href ? channel.link.href : channel.link;
@@ -30,8 +18,9 @@ const rssParser = async (url) => {
 		title: channel.title ?? "",
 		description: channel.description ?? "",
 		link,
-		items,
+		feedURL,
 		image: channel.image ? channel.image.url : channel["itunes:image"] ? channel["itunes:image"].href : "",
+		items,
 	};
 
 	rss.items = rss.items.map((item) => {

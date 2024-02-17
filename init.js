@@ -5,7 +5,8 @@ const path = require("path");
 const app = express();
 
 const config = require("./config");
-const routes = require("./routes");
+const registerSources = require("./src/actions/register-sources");
+const routes = require("./src/routes");
 
 app.set("trust proxy", true);
 app.set("view engine", "ejs");
@@ -23,10 +24,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan("dev")); // for dev logging
 
-app.use(routes);
+app.use("/api", routes);
 
 // Start the server
 app.listen(config.PORT, null, function () {
 	console.log("Node version", process.version);
 	console.log("Currl server running on port", config.PORT);
 });
+
+// Register all sources
+registerSources();

@@ -1,7 +1,7 @@
 module.exports = {
 	name: "Techcrunch",
-	description: "Startup & Technology News. An unofficial source which uses Techcrunch's RSS feed",
-	image: "/assets/logos/techcrunch.svg",
+	description: "Startup & Technology News.",
+	image: "/assets/logos/techcrunch.png",
 	requiresInput: false,
 	helpHTML: "",
 	getFeedURL: async () => {

@@ -3,7 +3,7 @@
  */
 
 const mongoose = require("mongoose");
-const config = require("../config");
+const config = require("../../config");
 
 const channelSchema = require("./channels");
 const deviceSchema = require("./devices");
@@ -33,7 +33,6 @@ module.exports = (() => {
 		});
 
 		connectToDb();
-		const Schema = mongoose.Schema;
 
 		console.log("Atomate DB initialized");
 

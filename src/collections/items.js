@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const itemSchema = new Schema({
 	id: { type: String, index: true, required: true },
@@ -10,7 +11,7 @@ const itemSchema = new Schema({
 	publishedOn: Date,
 	createdOn: Date,
 	content: String,
-	enclosures: Object,
+	imageUrl: String,
 	fetchedOn: Date,
 });
 
