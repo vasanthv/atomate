@@ -10,20 +10,20 @@ const createChannel = async (req, res, next) => {
 
 		const sourceInput = req.body.input;
 
-		const feedURL = await source.getFeedURL(sourceInput);
+		const _feedURL = await source.getFeedURL(sourceInput);
 
-		const urlContents = await helper.getURLContents(feedURL);
+		const urlContents = await helper.getURLContents(_feedURL);
 
 		const _xmlJSON = await helper.xmlTOJSON(urlContents);
 
 		const isRssFeed = helper.isRSSFeed(_xmlJSON);
 		if (!isRssFeed) return helper.httpError(400, "Invalid RSS feed");
 
-		const rssFeed = rssParser(_xmlJSON, feedURL);
+		const rssFeed = rssParser(_xmlJSON, _feedURL);
 
-		await helper.addOrUpdateFeed(rssFeed);
+		const { title, link, description, feedURL, image } = await helper.addOrUpdateFeed(rssFeed);
 
-		res.send({ message: "Channel created" });
+		res.send({ message: "Channel created", channel: { title, link, description, feedURL, image } });
 	} catch (error) {
 		next(error);
 	}

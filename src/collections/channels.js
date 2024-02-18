@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const channelSchema = new Schema({
 	link: { type: String, index: true, required: true, unique: true },
-	feedUrl: { type: String, index: true, required: true, unique: true },
+	feedURL: { type: String, index: true, required: true, unique: true },
 	title: String,
 	description: String,
 	image: String,

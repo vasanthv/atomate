@@ -2,6 +2,9 @@ const rateLimiter = require("express-rate-limit");
 const { XMLParser } = require("fast-xml-parser");
 const slowDown = require("express-slow-down");
 const axios = require("axios");
+var { Readability, isProbablyReaderable } = require("@mozilla/readability");
+const { JSDOM } = require("jsdom");
+const createDOMPurify = require("dompurify");
 
 const config = require("../config");
 const { Channels, Items } = require("./collections").getInstance();
@@ -59,27 +62,46 @@ const speedLimiter = slowDown({
 const addOrUpdateFeed = async (rss) => {
 	const { items, ...channel } = rss;
 
-	const results = await Promise.all([upsertChannel(channel), upsertItems(items)]);
-	console.log(results);
+	const [newChannel] = await Promise.all([saveChannel(channel), saveItems(items)]);
+	return newChannel;
 };
-const upsertChannel = async (channel) => {
+const saveChannel = async (channel) => {
 	const { title, description, link, image, feedURL } = channel;
 
 	return Channels.findOneAndUpdate({ link }, { title, description, image, feedURL }, { new: true, upsert: true });
 };
 
-const upsertItems = async (rssItems, channelId) => {
-	const itemPromises = rssItems.map((rssItem) => {
-		const { id, title, description, link, author, published, updated, content, media, enclosures } = rssItem;
+const saveItems = async (rssItems, channelId) => {
+	const itemPromises = rssItems.map(async (rssItem) => {
+		let { id, title, description, link, author, published, updated, content, media, enclosures } = rssItem;
+
 		const imageUrl = media?.thumbnail?.url ?? enclosures.length > 0 ? enclosures[0].url : undefined;
-		return Items.findOneAndUpdate(
+
+		const isAlreadySaved = await Items.findOne({ id }).exec();
+
+		if (isAlreadySaved && isAlreadySaved.updated === updated) return;
+
+		if (!content) content = await getContent(link);
+
+		console.log({ title, description, link, author, published, updated, content, imageUrl, channel: channelId });
+		return Items.updateOne(
 			{ id },
-			{ title, description, link, author, published, updated, content, imageUrl, channel: channelId },
-			{ new: true, upsert: true }
+			{ title, description, link, author, published, updated, content, imageUrl, channel: channelId }
 		);
 	});
 
 	return Promise.all(itemPromises);
+};
+
+const getContent = async (url) => {
+	const dom = await JSDOM.fromURL(url, {});
+	if (!isProbablyReaderable(dom.window.document)) return "";
+
+	let reader = new Readability(dom.window.document).parse();
+
+	const DOMPurify = createDOMPurify(dom.window);
+
+	return DOMPurify.sanitize(reader.content);
 };
 
 //Throws a error which can be handled and changed to HTTP Error in the Express js Error handling middleware.
