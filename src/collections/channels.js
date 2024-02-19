@@ -8,7 +8,8 @@ const channelSchema = new Schema({
 	description: String,
 	image: String,
 	createdOn: { type: Date, default: Date.now },
-	lastFetchedOn: Date,
+	lastFetchedOn: Date, // Last successful fetch of the RSS feed
+	lastUpdatedOn: Date, // Last update happened on the RSS feed
 	fetchIntervalInMinutes: { type: Number, default: 60 },
 });
 

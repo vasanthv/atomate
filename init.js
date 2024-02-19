@@ -5,7 +5,8 @@ const path = require("path");
 const app = express();
 
 const config = require("./config");
-const registerSources = require("./src/actions/register-sources");
+const initSources = require("./src/initSources");
+const { initAllChannelsFetch: initScheduler } = require("./src/scheduler");
 const routes = require("./src/routes");
 
 app.set("trust proxy", true);
@@ -32,5 +33,8 @@ app.listen(config.PORT, null, function () {
 	console.log("Currl server running on port", config.PORT);
 });
 
-// Register all sources
-registerSources();
+// Initialize all sources
+initSources();
+
+// Initialize the scheduler for every channel to fetch on a frequent interval
+// initScheduler();

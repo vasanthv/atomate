@@ -8,5 +8,6 @@ module.exports = new Schema({
 	image: String,
 	createdOn: { type: Date, default: Date.now },
 	requiresInput: Boolean,
+	inputLabel: String,
 	helpHTML: String,
 });

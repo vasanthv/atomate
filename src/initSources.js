@@ -1,6 +1,6 @@
-const sources = require("../sources");
+const sources = require("./sources");
 
-const { Sources } = require("../collections").getInstance();
+const { Sources } = require("./collections").getInstance();
 /*
  * Registers all sources from ./sources folder in the datebase
  * No updates. Only creation.
@@ -8,9 +8,9 @@ const { Sources } = require("../collections").getInstance();
 module.exports = async () => {
 	const sourceRegistrationPromises = Object.keys(sources).map((key) => {
 		const source = sources[key];
-		const { name, description, image, requiresInput, helpHTML } = source;
+		const { name, description, image, requiresInput, inputLabel, helpHTML } = source;
 
-		const updateFields = { name, description, image, requiresInput, helpHTML };
+		const updateFields = { name, description, image, requiresInput, inputLabel, helpHTML };
 		// Upsert the document
 		return Sources.findOneAndUpdate({ key }, updateFields, {
 			new: true,

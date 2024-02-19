@@ -5,7 +5,7 @@ const uuid = require("uuid").v4;
 
 const config = require("../config");
 const model = require("./model");
-const helper = require("./helper");
+const utils = require("./utils");
 
 router.use(
 	session({
@@ -33,9 +33,11 @@ router.get("/csrf.js", async (req, res) => {
 	res.send(`window.CSRF_TOKEN="${csrfToken}"`);
 });
 
-router.use(helper.csrfValidator);
+router.use(utils.csrfValidator);
 
 router.post("/channels", model.createChannel);
+router.get("/items", model.getItems);
+router.get("/sources", model.getSources);
 
 /**
  * API endpoints common error handling middleware
