@@ -9,6 +9,7 @@ const itemSchema = new Schema({
 	link: { type: String, required: true },
 	author: String,
 	publishedOn: Date,
+	updatedOn: Date,
 	createdOn: Date,
 	content: String,
 	imageUrl: String,

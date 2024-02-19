@@ -1,11 +1,10 @@
 {
 	"name": "atomate",
 	"version": "0.0.1",
-	"description": "A free RSS reader for the web",
+	"description": "A free RSS or Atom reader for the web",
 	"main": "init.js",
 	"scripts": {
 		"start": "node init.js",
-		"api-dev": "DISABLE_CSRF=true node init.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [
@@ -17,12 +16,8 @@
 		"@mozilla/readability": "^0.5.0",
 		"axios": "^1.6.7",
 		"body-parser": "^1.20.2",
-		"connect-mongo": "^5.1.0",
 		"dompurify": "^3.0.8",
 		"express": "^4.18.2",
-		"express-rate-limit": "^7.1.5",
-		"express-session": "^1.18.0",
-		"express-slow-down": "^2.0.1",
 		"fast-xml-parser": "^4.3.4",
 		"jsdom": "^24.0.0",
 		"mongoose": "^8.1.1",

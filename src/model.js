@@ -55,7 +55,7 @@ const getItems = async (req, res, next) => {
 			.populate("channel", "link feedURL title description image")
 			.skip(skip)
 			.limit(50)
-			.sort("-createdOn")
+			.sort("-publishedOn")
 			.exec();
 
 		res.json({ items });

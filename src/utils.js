@@ -1,13 +1,10 @@
-const rateLimiter = require("express-rate-limit");
 const { XMLParser } = require("fast-xml-parser");
-const slowDown = require("express-slow-down");
 const { rssParser } = require("./rssParser");
 const axios = require("axios");
 var { Readability, isProbablyReaderable } = require("@mozilla/readability");
 const { JSDOM } = require("jsdom");
 const createDOMPurify = require("dompurify");
 
-const config = require("../config");
 const { Channels, Items } = require("./collections").getInstance();
 
 const getChannelLinks = async (links) => {
@@ -49,31 +46,6 @@ const isRSSFeed = (data) => {
 	return !!(data.rss?.channel ? data.rss.channel : data.feed);
 };
 
-/* Middlewares */
-const csrfValidator = async (req, res, next) => {
-	if (config.DISABLE_CSRF || req.method === "GET" || req.headers["x-api-key"] || req.headers["X-API-KEY"]) {
-		return next();
-	}
-	if (!req.session.csrfs?.some((csrf) => csrf.token === req.headers["x-csrf-token"])) {
-		return res.status(400).json({ message: "Page expired. Please refresh and try again" });
-	}
-	next();
-};
-const rateLimit = (options) => {
-	return rateLimiter({
-		max: 50,
-		...options,
-		windowMs: (options?.windowMs || 5) * 60 * 1000, // in minutes
-		handler: (req, res) =>
-			res.status(429).json({ message: `Too many requests. Try again after ${options?.windowMs || 5} mins` }),
-	});
-};
-const speedLimiter = slowDown({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	delayAfter: 20, // allow 100 requests per 15 minutes, then...
-	delayMs: () => 500, // begin adding 500ms of delay per request above 20
-});
-
 /* DB Helpers */
 const getChannel = async (_link) => {
 	const channel = await Channels.findOne({ link: _link }).exec();
@@ -113,15 +85,18 @@ const saveItems = async (rssItems, channelId) => {
 
 		const imageUrl = media?.thumbnail?.url ?? enclosures.length > 0 ? enclosures[0].url : undefined;
 		if (!title) title = (description ?? "Untitled").replace(/(<([^>]+)>)/gi, "");
+		const publishedOn = published;
+		const updatedOn = updated;
 
 		const isAlreadySaved = await Items.findOne({ id }).exec();
-		if (isAlreadySaved && isAlreadySaved.updated === updated) return;
+
+		if (isAlreadySaved && isAlreadySaved.updatedOn?.getTime() === updatedOn?.getTime()) return;
 		isUpdateAvailable = true;
 
 		if (!content) content = await getContent(link);
 		return Items.findOneAndUpdate(
 			{ id },
-			{ title, description, link, author, published, updated, content, imageUrl, channel: channelId },
+			{ title, description, link, author, publishedOn, updatedOn, content, imageUrl, channel: channelId },
 			{ new: true, upsert: true }
 		);
 	});
@@ -159,9 +134,6 @@ module.exports = {
 	getURLContents,
 	xmlTOJSON,
 	isRSSFeed,
-	csrfValidator,
-	rateLimit,
-	speedLimiter,
 	updateChannelFeed,
 	getChannel,
 	saveChannel,
