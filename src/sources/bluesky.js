@@ -9,7 +9,7 @@ module.exports = {
 	requiresInput: true,
 	inputLabel: "Bluesky profile link",
 	helpHTML: "Add your Bluesky profile URL. Eg: https://bsky.app/profile/vasanthv.bsky.social",
-	channalFetchIntervalInMinutes: 15,
+	channalFetchIntervalInMinutes: 60,
 	getFeedURL: async (profileLink) => {
 		if (!profileLink) return;
 

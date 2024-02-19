@@ -1,6 +1,6 @@
 module.exports = {
 	name: "Techcrunch",
-	description: "Startup & Technology News.",
+	description: "Subscribe for startup & technology news.",
 	image: "/assets/logos/techcrunch.png",
 	requiresInput: false,
 	helpHTML: "",
