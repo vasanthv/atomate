@@ -37,4 +37,4 @@ app.listen(config.PORT, null, function () {
 initSources();
 
 // Initialize the scheduler for every channel to fetch on a frequent interval
-// initScheduler();
+initScheduler();

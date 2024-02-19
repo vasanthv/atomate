@@ -112,6 +112,7 @@ const saveItems = async (rssItems, channelId) => {
 		let { id, title, description, link, author, published, updated, content, media, enclosures } = rssItem;
 
 		const imageUrl = media?.thumbnail?.url ?? enclosures.length > 0 ? enclosures[0].url : undefined;
+		if (!title) title = (description ?? "Untitled").replace(/(<([^>]+)>)/gi, "");
 
 		const isAlreadySaved = await Items.findOne({ id }).exec();
 		if (isAlreadySaved && isAlreadySaved.updated === updated) return;
