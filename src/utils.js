@@ -1,11 +1,13 @@
+const { Readability, isProbablyReaderable } = require("@mozilla/readability");
 const { XMLParser } = require("fast-xml-parser");
-const { rssParser } = require("./rssParser");
-const axios = require("axios");
-var { Readability, isProbablyReaderable } = require("@mozilla/readability");
-const { JSDOM } = require("jsdom");
 const createDOMPurify = require("dompurify");
+const webPush = require("web-push");
+const { JSDOM } = require("jsdom");
+const axios = require("axios");
 
-const { Channels, Items } = require("./collections").getInstance();
+const { Channels, Devices, Items } = require("./collections").getInstance();
+const { rssParser } = require("./rssParser");
+const config = require("../config");
 
 const getChannelLinks = async (links) => {
 	if (!Array.isArray(links)) return [];
@@ -92,8 +94,9 @@ const saveItems = async (rssItems, channelId) => {
 
 		if (isAlreadySaved && isAlreadySaved.updatedOn?.getTime() === updatedOn?.getTime()) return;
 		isUpdateAvailable = true;
+		notifySubscribers(channelId, title, id);
 
-		if (!content) content = await getContent(link);
+		if (!content) content = await getReadableContent(link);
 		return Items.findOneAndUpdate(
 			{ id },
 			{ title, description, link, author, publishedOn, updatedOn, content, imageUrl, channel: channelId },
@@ -109,15 +112,37 @@ const saveItems = async (rssItems, channelId) => {
 	return Promise.all(itemPromises);
 };
 
-const getContent = async (url) => {
+const getReadableContent = async (url) => {
 	const dom = await JSDOM.fromURL(url, {});
 	if (!isProbablyReaderable(dom.window.document)) return "";
-
 	let reader = new Readability(dom.window.document).parse();
-
 	const DOMPurify = createDOMPurify(dom.window);
 
 	return DOMPurify.sanitize(reader.content);
+};
+
+/* Send push notifications to subscribers */
+const notifySubscribers = async (channelId, content, itemId) => {
+	const [devices, channel] = await Promise.all([
+		Devices.find({ channel: channelId }).exec(),
+		Channels.findOne({ _id: channelId }).exec(),
+	]);
+
+	const pushPromises = devices.map((device) => {
+		const url = `${config.URL}read?id=${encodeURIComponent(itemId)}`;
+		return sendPushNotification(device.pushCredentials, channel.title, content, url);
+	});
+
+	return Promise.all(pushPromises);
+};
+const sendPushNotification = async (pushCredentials, title, body, url) => {
+	const payload = JSON.stringify({ title, body, url });
+
+	try {
+		await webPush.sendNotification(pushCredentials, payload, config.PUSH_OPTIONS);
+	} catch (err) {
+		console.error(err);
+	}
 };
 
 //Throws a error which can be handled and changed to HTTP Error in the Express js Error handling middleware.

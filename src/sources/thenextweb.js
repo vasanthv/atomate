@@ -4,7 +4,7 @@ module.exports = {
 	image: "/assets/logos/thenextweb.png",
 	requiresInput: false,
 	helpHTML: "",
-	channalFetchIntervalInMinutes: 15,
+	channalFetchIntervalInMinutes: 10,
 	getFeedURL: async () => {
 		return "https://thenextweb.com/feed";
 	},

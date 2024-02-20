@@ -9,8 +9,10 @@ const rssParser = (data, feedURL) => {
 	if (Array.isArray(channel)) channel = channel[0];
 
 	let link = channel.link && channel.link.href ? channel.link.href : channel.link;
-	if (Array.isArray(link)) link = link[0].href ? link[0].href : link[0];
+	console.log({ link });
+	if (Array.isArray(link)) link = link.find((l) => l.rel === "alternate")?.href;
 
+	console.log(link);
 	let items = channel.item || channel.entry || [];
 	if (items && !Array.isArray(items)) items = [items];
 

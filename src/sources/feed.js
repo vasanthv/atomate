@@ -4,7 +4,7 @@ module.exports = {
 	image: "/assets/logos/feed.png",
 	requiresInput: true,
 	helpHTML: "",
-	channalFetchIntervalInMinutes: 60,
+	channalFetchIntervalInMinutes: 30,
 	getFeedURL: async (input) => {
 		return input;
 	},

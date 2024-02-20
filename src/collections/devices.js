@@ -6,4 +6,5 @@ module.exports = new Schema({
 	pushCredentials: Object,
 	subscribedChannels: [{ type: Schema.Types.ObjectId, ref: "Channels", index: true }],
 	createdOn: Date,
+	updatedOn: Date,
 });

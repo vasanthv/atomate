@@ -5,7 +5,7 @@ module.exports = {
 	requiresInput: true,
 	inputLabel: "Mastodon profile link",
 	helpHTML: "Add your Mastodan profile URL. Eg: https://mastodon.social/@vasanthv",
-	channalFetchIntervalInMinutes: 60,
+	channalFetchIntervalInMinutes: 30,
 	getFeedURL: async (profileLink) => {
 		if (!profileLink) return;
 		return `${profileLink.replace(/\/$/, "")}.rss`;

@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, "node_modules/vue/dist/")));
 app.use(express.static(path.join(__dirname, "node_modules/axios/dist/")));
 
 // Serve frontend assets & images to the browser
-app.use(express.static(path.join(__dirname, "icons")));
+app.use(express.static(path.join(__dirname, "assets")));
 app.use(express.static(path.join(__dirname, "www"), { maxAge: 0 }));
 
 // Handle API requests
