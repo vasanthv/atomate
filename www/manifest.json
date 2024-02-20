@@ -1,0 +1,28 @@
+{
+	"name": "Atomate",
+	"short_name": "Atomate",
+	"description": "A free RSS or Atom reader for the web.",
+	"icons": [
+		{
+			"src": "icon.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "icon-maskable.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "favicon.svg",
+			"sizes": "any"
+		}
+	],
+	"theme_color": "#fff",
+	"background_color": "#fff",
+	"display": "standalone",
+	"start_url": "/",
+	"permissions": ["notifications"]
+}

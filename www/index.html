@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Cache-control" content="public" />
+		<meta
+			name="viewport"
+			content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
+		/>
+		<meta name="description" content="A free RSS or Atom reader for the web." />
+		<meta name="keywords" content="rss reader, atom reader, new reader, web push" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<!-- Icons & Theme-->
+		<meta name="theme-color" content="#fff" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="mask-icon" href="/mask-icon.svg" color="#642C90" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/manifest.json" />
+
+		<!-- Meta data for link fetching -->
+		<meta property="og:url" content="https://atomate.co" />
+		<meta property="og:image" content="https://atomate.co/icon.png" />
+		<meta property="og:title" content="Atomate" />
+		<meta property="og:description" content="A free RSS or Atom reader for the web." />
+		<title>Atomate</title>
+		<!-- Site scripts & styles -->
+		<link href="/styles.css" rel="stylesheet" />
+
+		<script defer src="/vue.global.prod.js"></script>
+		<script defer src="/axios.min.js"></script>
+		<script defer src="/page.js"></script>
+		<script defer src="/script.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div id="app-containter" v-bind:style="'visibility:visible;'"></div>
+		</div>
+		<!-- <script async defer src="https://cabin.slap.im/hello.js"></script> -->
+	</body>
+</html>
