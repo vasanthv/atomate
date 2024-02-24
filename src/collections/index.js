@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const config = require("../../config");
 
 const channelSchema = require("./channels");
-const deviceSchema = require("./devices");
 const itemSchema = require("./items");
 
 module.exports = (() => {
@@ -35,11 +34,10 @@ module.exports = (() => {
 
 		console.log("Atomate DB initialized");
 
-		const Devices = mongoose.model("Devices", deviceSchema);
 		const Channels = mongoose.model("Channels", channelSchema);
 		const Items = mongoose.model("Items", itemSchema);
 
-		return { Devices, Channels, Items };
+		return { Channels, Items };
 	};
 	return {
 		getInstance: () => {

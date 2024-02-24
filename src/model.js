@@ -1,12 +1,10 @@
-const uuid = require("uuid").v4;
-
 const { scheduleChannelFetch } = require("./scheduler");
 const { rssParser } = require("./rssParser");
 const utils = require("./utils");
 
 const config = require("../config");
 
-const { Channels, Devices, Items } = require("./collections").getInstance();
+const { Channels, Items } = require("./collections").getInstance();
 
 const createChannel = async (req, res, next) => {
 	try {
@@ -77,63 +75,4 @@ const getItems = async (req, res, next) => {
 	}
 };
 
-const updatePushCredentials = async (req, res, next) => {
-	try {
-		let deviceId = req.body.deviceId;
-		const pushCredentials = req.body.credentials;
-		if (!pushCredentials) return utils.httpError(400, "Invalid inputs");
-
-		if (!deviceId) {
-			deviceId = uuid();
-			await new Devices({ deviceId, createdOn: new Date() }).save();
-		}
-
-		await Devices.updateOne({ deviceId }, { pushCredentials, updatedOn: new Date() });
-
-		res.json({ message: "Push credentials updated" });
-	} catch (error) {
-		next(error);
-	}
-};
-
-const pushSubscribeChannel = async (req, res, next) => {
-	try {
-		let deviceId = req.body.deviceId;
-		const channelLink = req.body.link;
-		if (!channelLink) return utils.httpError(400, "Channel link is empty");
-
-		const channel = await Channels.findOne({ link: channelLink }).exec();
-		if (!channel) return utils.httpError(400, "Invalid channel link");
-
-		await Devices.updateOne({ deviceId }, { $push: { subscribedChannels: channel._id, updatedOn: new Date() } });
-
-		res.json({ message: "Channel subscribed to push notification" });
-	} catch (error) {
-		next(error);
-	}
-};
-
-const pushUnsubscribeChannel = async (req, res, next) => {
-	try {
-		let deviceId = req.body.deviceId;
-		const channelLink = req.body.link;
-		if (!channelLink) return utils.httpError(400, "Channel link is empty");
-
-		const channel = await Channels.findOne({ link: channelLink }).exec();
-		if (!channel) return utils.httpError(400, "Invalid channel link");
-
-		await Devices.updateOne({ deviceId }, { $pull: { subscribedChannels: channel._id }, updatedOn: new Date() });
-
-		res.json({ message: "Channel unsubscribed from push notification" });
-	} catch (error) {
-		next(error);
-	}
-};
-
-module.exports = {
-	createChannel,
-	getItems,
-	updatePushCredentials,
-	pushSubscribeChannel,
-	pushUnsubscribeChannel,
-};
+module.exports = { createChannel, getItems };
