@@ -3,14 +3,13 @@
  */
 
 const mongoose = require("mongoose");
-const config = require("../../config");
-
-const channelSchema = require("./channels");
-const itemSchema = require("./items");
+const config = require("../config");
 
 module.exports = (() => {
 	let instance;
 	let db = mongoose.connection;
+	const Schema = mongoose.Schema;
+
 	mongoose.set("strictQuery", true);
 
 	const connectToDb = () => {
@@ -33,6 +32,33 @@ module.exports = (() => {
 		connectToDb();
 
 		console.log("Atomate DB initialized");
+
+		const channelSchema = new Schema({
+			link: { type: String, index: true, required: true, unique: true },
+			feedURL: { type: String, index: true, required: true, unique: true },
+			title: String,
+			description: String,
+			image: String,
+			createdOn: { type: Date, default: Date.now },
+			lastFetchedOn: Date, // Last successful fetch of the RSS feed
+			lastUpdatedOn: Date, // Last update happened on the RSS feed
+			fetchIntervalInMinutes: { type: Number, default: 60 },
+		});
+
+		const itemSchema = new Schema({
+			id: { type: String, index: true, required: true },
+			channel: { type: Schema.Types.ObjectId, ref: "Channels", index: true },
+			title: String,
+			description: String,
+			link: { type: String, required: true },
+			author: String,
+			publishedOn: Date,
+			updatedOn: Date,
+			createdOn: Date,
+			content: String,
+			imageUrl: String,
+			fetchedOn: Date,
+		});
 
 		const Channels = mongoose.model("Channels", channelSchema);
 		const Items = mongoose.model("Items", itemSchema);
