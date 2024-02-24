@@ -2,31 +2,42 @@ const uuid = require("uuid").v4;
 
 const { scheduleChannelFetch } = require("./scheduler");
 const { rssParser } = require("./rssParser");
-const sources = require("./sources");
 const utils = require("./utils");
+
+const config = require("../config");
 
 const { Channels, Devices, Items, Sources } = require("./collections").getInstance();
 
 const createChannel = async (req, res, next) => {
 	try {
-		const sourceKey = req.body.source;
-		const source = sources[sourceKey];
-		if (!source) return utils.httpError(400, "Invalid source");
+		const inputURL = req.body.input;
+		let inputFeedURL = inputURL;
 
-		const sourceInput = req.body.input;
+		// Check if this is a valid URL
+		const isValidURL = utils.isValidURL(inputURL);
+		if (!isValidURL) return utils.httpError(400, "Invalid URL");
 
-		const _feedURL = await source.getFeedURL(sourceInput);
-		if (!_feedURL) return utils.httpError(400, "Invalid input");
-		const channalFetchIntervalInMinutes = source.channalFetchIntervalInMinutes ?? 60;
+		// Check if the given URL is a valid RSS URL
+		let urlContents = await utils.getURLContents(inputURL);
+		let _xmlJSON = await utils.xmlTOJSON(urlContents);
+		let isRssFeed = utils.isRSSFeed(_xmlJSON);
 
-		const urlContents = await utils.getURLContents(_feedURL);
+		// If the given URL is not a RSS or Atom URL
+		// find RSS or Atom feed URL from the link tags
+		if (!isRssFeed) {
+			inputFeedURL = await utils.findFeedURL(inputURL);
+		}
 
-		const _xmlJSON = await utils.xmlTOJSON(urlContents);
+		if (!inputFeedURL) return utils.httpError(400, "Unable to find RSS or ATOM feed for the given URL");
+		const channalFetchIntervalInMinutes = config.CHANNEL_FETCH_INTERVAL_IN_MINUTES ?? 30;
 
-		const isRssFeed = utils.isRSSFeed(_xmlJSON);
+		// Fetch
+		urlContents = await utils.getURLContents(inputFeedURL);
+		_xmlJSON = await utils.xmlTOJSON(urlContents);
+		isRssFeed = utils.isRSSFeed(_xmlJSON);
 		if (!isRssFeed) return utils.httpError(400, "Invalid RSS feed");
 
-		const rssFeed = rssParser(_xmlJSON, _feedURL);
+		const rssFeed = rssParser(_xmlJSON, inputFeedURL);
 
 		let channel = await utils.getChannel(rssFeed.link);
 		if (channel) return res.json({ message: "Channel details", channel });

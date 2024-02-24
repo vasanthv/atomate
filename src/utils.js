@@ -11,17 +11,29 @@ const config = require("../config");
 
 const getChannelLinks = async (links) => {
 	if (!Array.isArray(links)) return [];
-	const channelLinks = links.filter(isValidUrl);
+	const channelLinks = links.filter(isValidURL);
 	return channelLinks;
 };
 
-const isValidUrl = (url) => {
+const isValidURL = (url) => {
 	try {
 		const _url = new URL(url);
 		return ["http:", "https:"].includes(_url.protocol) ? Boolean(_url) : false;
 	} catch (e) {
 		return false;
 	}
+};
+
+const findFeedURL = async (url) => {
+	const urlContents = await getURLContents(url);
+	const dom = new JSDOM(urlContents);
+
+	const feedURL =
+		dom.window.document.querySelector("link[type='application/rss+xml']").href ??
+		dom.window.document.querySelector("link[type='application/atom+xml']").href;
+	if (!feedURL) return;
+
+	return feedURL;
 };
 
 const getURLContents = async (url) => {
@@ -155,6 +167,8 @@ const httpError = (code, message) => {
 };
 
 module.exports = {
+	isValidURL,
+	findFeedURL,
 	getChannelLinks,
 	getURLContents,
 	xmlTOJSON,
