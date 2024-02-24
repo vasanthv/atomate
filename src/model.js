@@ -6,7 +6,7 @@ const utils = require("./utils");
 
 const config = require("../config");
 
-const { Channels, Devices, Items, Sources } = require("./collections").getInstance();
+const { Channels, Devices, Items } = require("./collections").getInstance();
 
 const createChannel = async (req, res, next) => {
 	try {
@@ -76,15 +76,6 @@ const getItems = async (req, res, next) => {
 		next(error);
 	}
 };
-const getSources = async (req, res, next) => {
-	try {
-		const sources = await Sources.find({}).exec();
-
-		res.json({ sources });
-	} catch (error) {
-		next(error);
-	}
-};
 
 const updatePushCredentials = async (req, res, next) => {
 	try {
@@ -142,7 +133,6 @@ const pushUnsubscribeChannel = async (req, res, next) => {
 module.exports = {
 	createChannel,
 	getItems,
-	getSources,
 	updatePushCredentials,
 	pushSubscribeChannel,
 	pushUnsubscribeChannel,

@@ -3,7 +3,6 @@ const model = require("./model");
 
 router.post("/channels", model.createChannel);
 router.get("/items", model.getItems);
-router.get("/sources", model.getSources);
 router.put("/push", model.updatePushCredentials);
 router.put("/push/subscribe", model.pushSubscribeChannel);
 router.put("/push/unsubscribe", model.pushUnsubscribeChannel);

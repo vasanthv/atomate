@@ -5,7 +5,6 @@ const path = require("path");
 const app = express();
 
 const config = require("./config");
-const initSources = require("./src/initSources");
 const { initAllChannelsFetch: initScheduler } = require("./src/scheduler");
 const routes = require("./src/routes");
 
@@ -32,9 +31,6 @@ app.listen(config.PORT, null, function () {
 	console.log("Node version", process.version);
 	console.log("Currl server running on port", config.PORT);
 });
-
-// Initialize all sources
-initSources();
 
 // Initialize the scheduler for every channel to fetch on a frequent interval
 initScheduler();

@@ -8,7 +8,6 @@ const config = require("../../config");
 const channelSchema = require("./channels");
 const deviceSchema = require("./devices");
 const itemSchema = require("./items");
-const sourceSchema = require("./sources");
 
 module.exports = (() => {
 	let instance;
@@ -39,9 +38,8 @@ module.exports = (() => {
 		const Devices = mongoose.model("Devices", deviceSchema);
 		const Channels = mongoose.model("Channels", channelSchema);
 		const Items = mongoose.model("Items", itemSchema);
-		const Sources = mongoose.model("Sources", sourceSchema);
 
-		return { Devices, Channels, Items, Sources };
+		return { Devices, Channels, Items };
 	};
 	return {
 		getInstance: () => {
