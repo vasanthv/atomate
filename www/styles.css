@@ -1,0 +1,140 @@
+:root {
+	--background: #ffffff;
+	--text: #161616;
+	--text-light: #595959;
+	--background-light: #efefef;
+	--link: #0260ff;
+}
+* {
+	outline: 0;
+}
+html {
+	-webkit-overflow-scrolling: touch;
+}
+body {
+	background: var(--background);
+	color: var(--text);
+	margin: 0;
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		"Helvetica Neue", sans-serif;
+	line-height: 1.66;
+	transition: background 0.5s;
+}
+a {
+	color: var(--link);
+	text-decoration: none;
+}
+a:focus,
+a:active,
+a:hover {
+	text-decoration: underline;
+}
+a:visited {
+	opacity: 0.7;
+}
+input {
+	background: var(--background);
+	color: var(--text);
+	display: block;
+	border: 1px solid var(--text-light);
+	border-radius: 0.5rem;
+	box-sizing: border-box;
+	font-size: 1rem;
+	width: 100%;
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+button {
+	background: var(--text);
+	color: var(--background);
+	border: none;
+	padding: 0.5rem 2rem;
+	font-size: inherit;
+	border-radius: 0.5rem;
+	cursor: pointer;
+}
+button:hover,
+button:focus,
+button:active {
+	text-decoration: underline;
+}
+.wrap {
+	width: 100%;
+	max-width: 640px;
+	margin-inline: auto;
+	padding: 0px 1rem;
+	box-sizing: border-box;
+}
+.light {
+	color: var(--text-light);
+}
+.small {
+	font-size: 0.9rem;
+}
+.semibold {
+	font-weight: 600;
+}
+.bold {
+	font-weight: 700;
+}
+.flex {
+	display: flex;
+	align-items: center;
+}
+.space-between {
+	justify-content: space-between;
+}
+.flex-1 {
+	flex: 1;
+}
+.row {
+	padding: 1rem 0px;
+}
+.icon.action {
+	width: 2.5rem;
+	height: 2.5rem;
+	padding: 0.5rem;
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+.icon.action:hover,
+.icon.action:focus,
+.icon.action:active {
+	background: var(--background-light);
+}
+
+#app-containter {
+	visibility: hidden;
+}
+#intro {
+	font-size: 1.1rem;
+	margin-top: 5rem;
+}
+#intro #logo {
+	width: 3rem;
+}
+#intro footer {
+	margin-top: 5rem;
+}
+header h1 {
+	margin: 0px;
+}
+article.item {
+	align-items: normal;
+	margin: 1rem 0rem 2rem;
+}
+article.item a.title {
+	font-size: 1.2rem;
+	color: inherit;
+	line-height: 1.5;
+}
+article img {
+	width: 2rem;
+	height: 2rem;
+	margin-right: 1rem;
+	margin-top: 0.5rem;
+	border-radius: 0.5rem;
+}
+article .meta a {
+	color: inherit;
+}

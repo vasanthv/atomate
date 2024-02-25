@@ -45,8 +45,8 @@ const createChannel = async (req, res, next) => {
 		// Initialize the scheduler
 		scheduleChannelFetch(channel);
 
-		const { title, link, description, feedURL, image } = channel;
-		res.json({ message: "Channel created", channel: { title, link, description, feedURL, image } });
+		const { _id, title, link, description, feedURL, image } = channel;
+		res.json({ message: "Channel created", channel: { _id, title, link, description, feedURL, image } });
 	} catch (error) {
 		next(error);
 	}

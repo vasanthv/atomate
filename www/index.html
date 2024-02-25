@@ -7,7 +7,7 @@
 			name="viewport"
 			content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
 		/>
-		<meta name="description" content="A free RSS or Atom reader for the web." />
+		<meta name="description" content="A minimal, free RSS or Atom reader for the web." />
 		<meta name="keywords" content="rss reader, atom reader, new reader, web push" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -22,7 +22,7 @@
 		<meta property="og:url" content="https://atomate.co" />
 		<meta property="og:image" content="https://atomate.co/icon.png" />
 		<meta property="og:title" content="Atomate" />
-		<meta property="og:description" content="A free RSS or Atom reader for the web." />
+		<meta property="og:description" content="A minimal, free RSS or Atom reader for the web." />
 		<title>Atomate</title>
 		<!-- Site scripts & styles -->
 		<link href="/styles.css" rel="stylesheet" />
@@ -34,7 +34,95 @@
 	</head>
 	<body>
 		<div id="app">
-			<div id="app-containter" v-bind:style="'visibility:visible;'"></div>
+			<div id="app-containter" class="wrap" v-bind:style="'visibility:visible;'">
+				<section id="intro" v-if="page === 'intro'">
+					<div id="logo">
+						<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path
+								d="M0 47.9977C-5.14201e-07 56.8343 7.16344 63.9977 16 63.9977H49.5557C58.3922 63.9977 65.7564 56.7271 63.6274 48.1509C57.8 24.6762 39.3215 6.19769 15.8469 0.370291C7.27062 -1.7587 2.46681e-06 5.60548 1.95261e-06 14.442L0 47.9977Z"
+							/>
+						</svg>
+					</div>
+					<h1>A minimal, free news reader for the web.</h1>
+					<p>
+						Atomate lets you add news source, blogs, microblogs, newsletters, Youtube channels, social media accounts or
+						any site with a <strong> public RSS or Atom </strong> feed and merges them into a single chronological feed.
+					</p>
+					<p>No sign up. No downloads. 100% free.</p>
+					<a href="/channels/add" class="bold"><button>Get started</button></a>
+
+					<footer class="center small light">
+						<nav>
+							<a href="">About</a> &middot; <a href="">Terms</a> &middot;
+							<a href="">Privacy</a>
+						</nav>
+					</footer>
+				</section>
+
+				<main v-if="page !== 'intro'">
+					<header class="row">
+						<nav>
+							<a href="/">Home</a> &middot; <a href="/channels">Channels</a> &middot;
+							<a href="/channels/add">Add Channel</a>
+						</nav>
+						<div class="flex">
+							<h1 class="flex-1">Your feed</h1>
+							<a href="#search" class="icon action">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+									<path
+										d="M16.041 15.856c-0.034 0.026-0.067 0.055-0.099 0.087s-0.060 0.064-0.087 0.099c-1.258 1.213-2.969 1.958-4.855 1.958-1.933 0-3.682-0.782-4.95-2.050s-2.050-3.017-2.050-4.95 0.782-3.682 2.050-4.95 3.017-2.050 4.95-2.050 3.682 0.782 4.95 2.050 2.050 3.017 2.050 4.95c0 1.886-0.745 3.597-1.959 4.856zM21.707 20.293l-3.675-3.675c1.231-1.54 1.968-3.493 1.968-5.618 0-2.485-1.008-4.736-2.636-6.364s-3.879-2.636-6.364-2.636-4.736 1.008-6.364 2.636-2.636 3.879-2.636 6.364 1.008 4.736 2.636 6.364 3.879 2.636 6.364 2.636c2.125 0 4.078-0.737 5.618-1.968l3.675 3.675c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414z"
+									/>
+								</svg>
+							</a>
+						</div>
+					</header>
+
+					<section v-if="page === 'home'">
+						<article class="item flex">
+							<img
+								src="https://files.mastodon.social/accounts/avatars/111/932/283/212/235/099/original/29e8d6b676e51d01.jpeg"
+							/>
+							<div class="flex-1">
+								<a href="" class="title">Google Chrome is a web browser developed by Google, released in 2008.</a>
+								<div class="meta light"><a href="">Techcrunch</a> &middot; <span>2 days ago</span></div>
+							</div>
+						</article>
+
+						<article class="item flex">
+							<img
+								src="https://files.mastodon.social/accounts/avatars/111/932/283/212/235/099/original/29e8d6b676e51d01.jpeg"
+							/>
+							<div class="flex-1">
+								<a href="" class="title">Google Chrome is a web browser developed by Google, released in 2008.</a>
+								<div class="meta light"><a href="">Techcrunch</a> &middot; <span>2 days ago</span></div>
+							</div>
+						</article>
+					</section>
+
+					<section v-if="page === 'channels'">
+						<article class="item flex" v-for="(channel, i) in channels" v-bind:key="channel._id">
+							<img v-bind:src="channel.image" v-bind:alt="channel.title" />
+							<div class="flex-1">
+								<a v-bind:href="'/channel/'+channel._id" v-bind:class="title">{{channel.title}}</a>
+								<div class="meta light">{{channel.description}}</div>
+							</div>
+							<a href="javascript:void(0)" class="icon action" v-on:click="removeChannel(channel._id)">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+									<path
+										d="M5.293 6.707l5.293 5.293-5.293 5.293c-0.391 0.391-0.391 1.024 0 1.414s1.024 0.391 1.414 0l5.293-5.293 5.293 5.293c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414l-5.293-5.293 5.293-5.293c0.391-0.391 0.391-1.024 0-1.414s-1.024-0.391-1.414 0l-5.293 5.293-5.293-5.293c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414z"
+									/>
+								</svg>
+							</a>
+						</article>
+					</section>
+
+					<section v-if="page === 'addChannel'">
+						<label for="inputURL" class="bold">Enter feed URL / Website address</label>
+						<input id="inputURL" type="url" placeholder="Eg: https://techcrunch.com" v-model="inputURL" />
+						<button v-on:click="createChannel">+ Add</button>
+					</section>
+				</main>
+			</div>
 		</div>
 		<!-- <script async defer src="https://cabin.slap.im/hello.js"></script> -->
 	</body>

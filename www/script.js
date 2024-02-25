@@ -1,30 +1,4 @@
-/* global linkifyHtml, page, axios, Vue, cabin */
-
-let swReg = null;
-const urlB64ToUint8Array = (base64String) => {
-	const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-	const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
-	const rawData = window.atob(base64);
-	const outputArray = new Uint8Array(rawData.length);
-	for (let i = 0; i < rawData.length; ++i) {
-		outputArray[i] = rawData.charCodeAt(i);
-	}
-	return outputArray;
-};
-
-const initApp = async () => {
-	if ("serviceWorker" in navigator) {
-		swReg = await navigator.serviceWorker.register("/sw.js");
-
-		navigator.serviceWorker.addEventListener("message", (event) => {
-			if (!event.data.action) return;
-			switch (event.data.action) {
-				default:
-					break;
-			}
-		});
-	}
-};
+/* global page, axios, Vue, cabin */
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -32,14 +6,14 @@ const defaultState = function () {
 	return {
 		loading: true,
 		page: "",
-		deviceId: window.localStorage.deviceId,
 		toast: [{ type: "", message: "" }],
-		sources: [],
 		items: [],
-		sourceInput: "",
-		channel: window.localStorage.channels ? JSON.parse(window.localStorage.channels) : [],
+		inputURL: "",
+		channels: [],
 	};
 };
+
+let atomateDb = indexedDB.open("MyDatabase", 1);
 
 const App = Vue.createApp({
 	data() {
@@ -63,15 +37,14 @@ const App = Vue.createApp({
 			if (cabin) cabin.event(event);
 		},
 		createChannel() {
-			axios.post("/api/channels", { source, input }).then((response) => {
-				console.log(response);
+			axios.post("/api/channels", { input: this.inputURL }).then((response) => {
+				addChannel(response.data.channel);
+				page.redirect("/channels");
 			});
 			this.userEvent("createChannel");
 		},
-		getSources() {
-			axios.get("/api/sources").then((response) => {
-				console.log(response);
-			});
+		removeChannel(channelId) {
+			removeChannel(channelId);
 		},
 		getItems() {
 			const channels = this.channels.map((c) => c.link);
@@ -79,59 +52,18 @@ const App = Vue.createApp({
 				console.log(response);
 			});
 		},
-		pushSubscribe(channel) {
-			axios.put("/api/push/subscribe", { deviceId, link: channel.link }).then((response) => {
-				this.setToast(response.data.message, "success");
-			});
-		},
-		pushUnsubscribe(channel) {
-			axios.put("/api/push/unsubscribe", { deviceId, link: channel.link }).then((response) => {
-				this.setToast(response.data.message, "success");
-			});
-		},
-		async subscribeToPush() {
-			if (swReg) {
-				try {
-					const vapidKey = (await axios.get("/api/meta")).data.vapidKey;
-					if (vapidKey) {
-						const pushSubscription = await swReg.pushManager.subscribe({
-							userVisibleOnly: true,
-							applicationServerKey: urlB64ToUint8Array(vapidKey),
-						});
-						const credentials = JSON.parse(JSON.stringify(pushSubscription));
-						await axios.put("/api/push", { credentials });
-						window.localStorage.pushSubscribed = true;
-						this.pushSubscribed = true;
-					}
-					return true;
-				} catch (err) {
-					console.log(err);
-					if (this.page === "home") {
-						this.setToast("Unable to enable notification, please try again.", "error");
-					}
-					return false;
-				}
-			}
-		},
-		logError(message, source, lineno, colno) {
-			const error = { message, source, lineno, colno, handle: this.handle, page: this.page };
-			axios.post("/api/error", { error }).then(() => {});
-			return true;
-		},
 	},
 }).mount("#app");
-
-window.onerror = App.logError;
 
 (() => {
 	axios.interceptors.request.use((config) => {
 		window.cancelRequestController = new AbortController();
 		return { ...config, signal: window.cancelRequestController.signal };
 	});
-
-	initApp();
 })();
 
+// Routes setup
+// Routes middleware
 page("*", (ctx, next) => {
 	// resetting state on any page load
 	App.resetState();
@@ -140,33 +72,72 @@ page("*", (ctx, next) => {
 	}
 	next();
 });
-
-/* Routes declaration */
+// Routes declaration
 page("/", () => {
-	App.page = App.channels.length > 0 ? "home" : "intro";
-	if (App.page === "home") {
+	App.page = App.channels.length > 0 ? "feed" : "intro";
+	if (App.page === "feed") {
 		App.getItems();
 	}
 });
 
-page("/channels", () => {
-	App.page = "channels";
-});
+page("/channels", () => (App.page = "channels"));
+page("/channels/add", () => (App.page = "addChannel"));
+page("/read", () => (App.page = "read"));
+page("/*", () => (App.page = "404"));
 
-page("/addsource", () => {
-	App.page = "addsource";
-});
+// IndexedDb actions
+// Create the schema
+atomateDb.onupgradeneeded = function () {
+	const dbResult = atomateDb.result;
+	dbResult.createObjectStore("channels", { keyPath: "_id" });
+};
 
-page("/source/:sourceId", () => {
-	App.page = "source";
-});
+const getAllChannels = () => {
+	const dbResult = atomateDb.result;
+	const tx = dbResult.transaction("channels", "readwrite");
+	const store = tx.objectStore("channels");
 
-page("/read", () => {
-	App.page = "read";
-});
+	const _getAllChannels = store.getAll();
 
-page("/*", () => {
-	App.page = "404";
-});
+	_getAllChannels.onsuccess = () => {
+		App.channels = _getAllChannels.result;
+	};
+};
 
-page();
+const addChannel = (channel) => {
+	const dbResult = atomateDb.result;
+	const tx = dbResult.transaction("channels", "readwrite");
+	const store = tx.objectStore("channels");
+
+	const putAction = store.put(channel);
+	putAction.onsuccess = () => {
+		// refresh the channels array
+		getAllChannels();
+	};
+	putAction.onerror = (e) => console.error(e);
+};
+
+const removeChannel = (channelId) => {
+	const dbResult = atomateDb.result;
+	const tx = dbResult.transaction("channels", "readwrite");
+	const store = tx.objectStore("channels");
+
+	const deleteAction = store.delete(channelId);
+	deleteAction.onsuccess = () => {
+		// refresh the channels array
+		getAllChannels();
+	};
+	deleteAction.onerror = (e) => console.error(e);
+};
+atomateDb.onsuccess = () => {
+	getAllChannels();
+};
+
+const initApp = () => {
+	if ("serviceWorker" in navigator) {
+		navigator.serviceWorker.register("/sw.js");
+	}
+	page();
+};
+
+initApp();

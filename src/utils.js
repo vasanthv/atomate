@@ -62,8 +62,8 @@ const isRSSFeed = (data) => {
 const getChannel = async (_link) => {
 	const channel = await Channels.findOne({ link: _link }).exec();
 	if (!channel) return false;
-	const { title, link, description, feedURL, image } = channel;
-	return { title, link, description, feedURL, image };
+	const { _id, title, link, description, feedURL, image } = channel;
+	return { _id, title, link, description, feedURL, image };
 };
 
 const updateChannelFeed = async (channel) => {

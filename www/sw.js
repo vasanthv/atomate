@@ -9,9 +9,8 @@ self.addEventListener("install", function (e) {
 	const filesToCache = [
 		"/",
 		"/manifest.json",
-		"/style.css",
+		"/styles.css",
 		"/vue.global.prod.js",
-		"/linkify.min.js",
 		"/axios.min.js",
 		"/page.js",
 		"/script.js",

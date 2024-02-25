@@ -12,8 +12,9 @@ app.set("trust proxy", true);
 app.set("view engine", "ejs");
 
 // Serve vue.js & axios to the browser
-app.use(express.static(path.join(__dirname, "node_modules/vue/dist/")));
 app.use(express.static(path.join(__dirname, "node_modules/axios/dist/")));
+app.use(express.static(path.join(__dirname, "node_modules/vue/dist/")));
+app.use(express.static(path.join(__dirname, "node_modules/page/")));
 
 // Serve frontend assets & images to the browser
 app.use(express.static(path.join(__dirname, "assets")));
@@ -25,6 +26,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan("dev")); // for dev logging
 
 app.use("/api", routes);
+
+app.use(["/", "/read", "/channels", "/channels/add", "/feed"], (req, res) =>
+	res.sendFile(path.join(__dirname, "www/index.html"))
+);
 
 // Start the server
 app.listen(config.PORT, null, function () {
