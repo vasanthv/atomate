@@ -179,6 +179,6 @@ article .meta a {
 	margin: 0px 0px 2rem;
 }
 #actionButton {
-	display: inline-block;
-	margin-bottom: 2rem;
+	display: block;
+	margin: 1rem auto 2rem;
 }

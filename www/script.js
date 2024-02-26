@@ -143,7 +143,8 @@ const App = Vue.createApp({
 		searchItems() {
 			if (this.searchQuery) {
 				this.items = [];
-				this.getItems();
+				if (this.page === "home") this.getItems();
+				else if (this.page === "channel") this.getChannel(this.channel._id);
 			}
 		},
 	},
@@ -175,6 +176,8 @@ const initApp = () => {
 page("*", (ctx, next) => {
 	// resetting state on any page load
 	App.items = [];
+	App.showLoadMore = false;
+	App.searchQuery = "";
 	App.showLoadMore = false;
 	if (App.page !== "channel") App.channel = {};
 	if (App.page !== "item") App.item = {};
