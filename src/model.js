@@ -51,19 +51,45 @@ const createChannel = async (req, res, next) => {
 		next(error);
 	}
 };
+const getChannel = async (req, res, next) => {
+	try {
+		const channelId = req.params.channelId;
+		const searchString = req.query.query;
+
+		const skip = Number(req.query.skip) || 0;
+
+		let query = { channel: channelId };
+		if (searchString) query["$text"] = { $search: searchString };
+
+		const [channel, items] = await Promise.all([
+			Channels.findOne({ _id: channelId }).select("link feedURL title description image").exec(),
+			Items.find()
+				.select("id title description content author channel imageUrl publishedOn")
+				.populate("channel", "link feedURL title description image")
+				.skip(skip)
+				.limit(50)
+				.sort("-publishedOn")
+				.exec(),
+		]);
+
+		res.json({ channel, items });
+	} catch (error) {
+		next(error);
+	}
+};
 
 const getItems = async (req, res, next) => {
 	try {
-		const channelLinks = await utils.getChannelLinks(req.body.channels);
+		const channelIds = req.query.channels ? req.query.channels.split(",") : [];
 		const skip = Number(req.query.skip) || 0;
+		const searchString = req.query.query;
 
-		const channels = await Channels.find({ link: { $in: channelLinks } })
-			.select("_id")
-			.exec();
+		let query = { channel: { $in: channelIds } };
+		if (searchString) query["$text"] = { $search: searchString };
 
-		const items = await Items.find({ channel: { $in: channels.map((c) => c._id) } })
-			.select("id title description content author channel imageUrl publishedOn")
-			.populate("channel", "link feedURL title description image")
+		const items = await Items.find(query)
+			.select("id title author channel publishedOn")
+			.populate("channel", "title description image")
 			.skip(skip)
 			.limit(50)
 			.sort("-publishedOn")
@@ -75,4 +101,19 @@ const getItems = async (req, res, next) => {
 	}
 };
 
-module.exports = { createChannel, getItems };
+const getItem = async (req, res, next) => {
+	try {
+		const itemId = req.params.itemId;
+
+		const item = await Items.findOne({ _id: itemId })
+			.select("id title description content author channel imageUrl publishedOn")
+			.populate("channel", "link feedURL title description image")
+			.exec();
+
+		res.json({ item });
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { createChannel, getChannel, getItems, getItem };

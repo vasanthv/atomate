@@ -2,7 +2,9 @@ const router = require("express").Router();
 const model = require("./model");
 
 router.post("/channels", model.createChannel);
+router.get("/channels/:channelId", model.getChannel);
 router.get("/items", model.getItems);
+router.get("/items/:itemId", model.getItem);
 
 /**
  * API endpoints common error handling middleware

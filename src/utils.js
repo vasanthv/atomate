@@ -7,12 +7,6 @@ const axios = require("axios");
 const { Channels, Items } = require("./collections").getInstance();
 const { rssParser } = require("./rssParser");
 
-const getChannelLinks = async (links) => {
-	if (!Array.isArray(links)) return [];
-	const channelLinks = links.filter(isValidURL);
-	return channelLinks;
-};
-
 const isValidURL = (url) => {
 	try {
 		const _url = new URL(url);
@@ -142,7 +136,6 @@ const httpError = (code, message) => {
 module.exports = {
 	isValidURL,
 	findFeedURL,
-	getChannelLinks,
 	getURLContents,
 	xmlTOJSON,
 	isRSSFeed,

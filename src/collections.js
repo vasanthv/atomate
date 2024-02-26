@@ -59,6 +59,7 @@ module.exports = (() => {
 			imageUrl: String,
 			fetchedOn: Date,
 		});
+		itemSchema.index({ title: "text", description: "text" });
 
 		const Channels = mongoose.model("Channels", channelSchema);
 		const Items = mongoose.model("Items", itemSchema);

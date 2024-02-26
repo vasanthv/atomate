@@ -27,7 +27,7 @@ app.use(morgan("dev")); // for dev logging
 
 app.use("/api", routes);
 
-app.use(["/", "/read", "/channels", "/channels/add", "/feed"], (req, res) =>
+app.use(["/", "/items", "/channels", "/channels/*"], (req, res) =>
 	res.sendFile(path.join(__dirname, "www/index.html"))
 );
 

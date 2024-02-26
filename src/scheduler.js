@@ -5,7 +5,11 @@ const { Channels } = require("./collections").getInstance();
 const utils = require("./utils");
 
 const initAllChannelsFetch = async () => {
-	const channels = await Channels.find({}).exec();
+	// Ignore Channels that did not got updated in the last 30 dates
+	const lastMonthDate = new Date();
+	lastMonthDate.setDate(lastMonthDate.getDate() - 30);
+
+	const channels = await Channels.find({ lastFetchedOn: { $gte: lastMonthDate } }).exec();
 
 	channels.forEach(scheduleChannelFetch);
 };

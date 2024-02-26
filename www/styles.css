@@ -1,9 +1,12 @@
 :root {
 	--background: #ffffff;
 	--text: #161616;
-	--text-light: #595959;
+	--text-light: #686868;
 	--background-light: #efefef;
 	--link: #0260ff;
+
+	--red: #c0392b;
+	--green: #27ae60;
 }
 * {
 	outline: 0;
@@ -28,9 +31,6 @@ a:focus,
 a:active,
 a:hover {
 	text-decoration: underline;
-}
-a:visited {
-	opacity: 0.7;
 }
 input {
 	background: var(--background);
@@ -57,6 +57,14 @@ button:hover,
 button:focus,
 button:active {
 	text-decoration: underline;
+}
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	text-decoration: none !important;
+}
+img {
+	max-width: 100%;
 }
 .wrap {
 	width: 100%;
@@ -106,6 +114,31 @@ button:active {
 #app-containter {
 	visibility: hidden;
 }
+#toast {
+	background-color: var(--text);
+	color: var(--background);
+	text-align: center;
+	border-radius: 0.1rem;
+	box-sizing: border-box;
+	position: fixed;
+	z-index: 10;
+	left: 0px;
+	right: 0px;
+	top: 0rem;
+	max-height: 0;
+	margin: auto;
+	overflow: hidden;
+	transition: max-height 0.25s ease-in;
+}
+#toast.show {
+	max-height: 5rem;
+}
+#toast.error {
+	background: var(--red);
+}
+#toast.success {
+	background: var(--green);
+}
 #intro {
 	font-size: 1.1rem;
 	margin-top: 5rem;
@@ -117,7 +150,8 @@ button:active {
 	margin-top: 5rem;
 }
 header h1 {
-	margin: 0px;
+	margin: 0.5rem 0px 0px;
+	line-height: 1.3;
 }
 article.item {
 	align-items: normal;
@@ -128,7 +162,10 @@ article.item a.title {
 	color: inherit;
 	line-height: 1.5;
 }
-article img {
+article.item a.title:visited {
+	color: var(--text-light);
+}
+article img.atomateAvatar {
 	width: 2rem;
 	height: 2rem;
 	margin-right: 1rem;
@@ -137,4 +174,11 @@ article img {
 }
 article .meta a {
 	color: inherit;
+}
+#search {
+	margin: 0px 0px 2rem;
+}
+#actionButton {
+	display: inline-block;
+	margin-bottom: 2rem;
 }

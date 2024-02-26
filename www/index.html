@@ -35,9 +35,13 @@
 	<body>
 		<div id="app">
 			<div id="app-containter" class="wrap" v-bind:style="'visibility:visible;'">
+				<section id="toast" v-bind:class="toast.type + (toast.message ? ' show' : '')" v-on:click="toast.message = ''">
+					{{toast.message}}
+				</section>
+
 				<section id="intro" v-if="page === 'intro'">
 					<div id="logo">
-						<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
 							<path
 								d="M0 47.9977C-5.14201e-07 56.8343 7.16344 63.9977 16 63.9977H49.5557C58.3922 63.9977 65.7564 56.7271 63.6274 48.1509C57.8 24.6762 39.3215 6.19769 15.8469 0.370291C7.27062 -1.7587 2.46681e-06 5.60548 1.95261e-06 14.442L0 47.9977Z"
 							/>
@@ -66,8 +70,14 @@
 							<a href="/channels/add">Add Channel</a>
 						</nav>
 						<div class="flex">
-							<h1 class="flex-1">Your feed</h1>
-							<a href="#search" class="icon action">
+							<h1 class="flex-1" v-html="pageTitle"></h1>
+							<a
+								href="javascript:void(0)"
+								class="icon action"
+								v-if="showSearch"
+								aria-label="Search"
+								v-on:click="toggleSearchField"
+							>
 								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 									<path
 										d="M16.041 15.856c-0.034 0.026-0.067 0.055-0.099 0.087s-0.060 0.064-0.087 0.099c-1.258 1.213-2.969 1.958-4.855 1.958-1.933 0-3.682-0.782-4.95-2.050s-2.050-3.017-2.050-4.95 0.782-3.682 2.050-4.95 3.017-2.050 4.95-2.050 3.682 0.782 4.95 2.050 2.050 3.017 2.050 4.95c0 1.886-0.745 3.597-1.959 4.856zM21.707 20.293l-3.675-3.675c1.231-1.54 1.968-3.493 1.968-5.618 0-2.485-1.008-4.736-2.636-6.364s-3.879-2.636-6.364-2.636-4.736 1.008-6.364 2.636-2.636 3.879-2.636 6.364 1.008 4.736 2.636 6.364 3.879 2.636 6.364 2.636c2.125 0 4.078-0.737 5.618-1.968l3.675 3.675c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414z"
@@ -75,35 +85,53 @@
 								</svg>
 							</a>
 						</div>
+						<div v-if="pageDescription" v-html="pageDescription" class="light"></div>
 					</header>
 
-					<section v-if="page === 'home'">
-						<article class="item flex">
+					<section id="search" v-if="showSearchField">
+						<input
+							id="searchField"
+							type="search"
+							v-model="searchQuery"
+							placeholder="Search..."
+							v-on:keydown.enter="searchItems"
+						/>
+					</section>
+
+					<section v-if="showItemFeed">
+						<article class="item flex" v-for="(item, i) in items" v-bind:key="item._id">
 							<img
-								src="https://files.mastodon.social/accounts/avatars/111/932/283/212/235/099/original/29e8d6b676e51d01.jpeg"
+								v-bind:src="item.channel?.image ? item.channel?.image : 'no-image.svg'"
+								v-bind:alt="item.channel.title"
+								class="atomateAvatar"
 							/>
 							<div class="flex-1">
-								<a href="" class="title">Google Chrome is a web browser developed by Google, released in 2008.</a>
-								<div class="meta light"><a href="">Techcrunch</a> &middot; <span>2 days ago</span></div>
+								<a v-bind:href="'/items/'+item._id" class="title">{{item.title}}</a>
+								<div class="meta small light">
+									<a v-bind:href="'/channels/'+item.channel._id" v-on:click="channel = item.channel">
+										{{item.channel.title}}
+									</a>
+									&middot;
+									<span v-bind:aria-label="item.publishedOn" v-bind:title="item.publishedOn">
+										{{formatDate(item.publishedOn)}}
+									</span>
+									<span v-if="item.author"> &middot; {{item.author}}</span>
+								</div>
 							</div>
 						</article>
 
-						<article class="item flex">
-							<img
-								src="https://files.mastodon.social/accounts/avatars/111/932/283/212/235/099/original/29e8d6b676e51d01.jpeg"
-							/>
-							<div class="flex-1">
-								<a href="" class="title">Google Chrome is a web browser developed by Google, released in 2008.</a>
-								<div class="meta light"><a href="">Techcrunch</a> &middot; <span>2 days ago</span></div>
-							</div>
-						</article>
+						<button id="actionButton" v-on:click="getItems" v-if="showLoadMore">Load more &darr;</button>
 					</section>
 
 					<section v-if="page === 'channels'">
 						<article class="item flex" v-for="(channel, i) in channels" v-bind:key="channel._id">
-							<img v-bind:src="channel.image" v-bind:alt="channel.title" />
+							<img
+								v-bind:src="channel.image ? channel.image : '/no-image.svg'"
+								v-bind:alt="channel.title"
+								class="atomateAvatar"
+							/>
 							<div class="flex-1">
-								<a v-bind:href="'/channel/'+channel._id" v-bind:class="title">{{channel.title}}</a>
+								<a v-bind:href="'/channels/'+channel._id" v-bind:class="title">{{channel.title}}</a>
 								<div class="meta light">{{channel.description}}</div>
 							</div>
 							<a href="javascript:void(0)" class="icon action" v-on:click="removeChannel(channel._id)">
@@ -116,10 +144,30 @@
 						</article>
 					</section>
 
+					<section v-if="page === 'item'">
+						<article v-if="item._id">
+							<div class="meta small light">
+								<a v-bind:href="'/channels/'+item.channel._id" v-on:click="channel = item.channel">
+									{{item.channel.title}}
+								</a>
+								&middot;
+								<span v-bind:aria-label="item.publishedOn" v-bind:title="item.publishedOn">
+									{{formatDate(item.publishedOn)}}
+								</span>
+								<span v-if="item.author"> &middot; {{item.author}}</span>
+							</div>
+							<div v-html="item.content ?? item.description"></div>
+							<br />
+							<a v-bind:href="item.link" id="actionButton" target="_blank">
+								<button>Open original link &nearr;</button>
+							</a>
+						</article>
+					</section>
+
 					<section v-if="page === 'addChannel'">
 						<label for="inputURL" class="bold">Enter feed URL / Website address</label>
 						<input id="inputURL" type="url" placeholder="Eg: https://techcrunch.com" v-model="inputURL" />
-						<button v-on:click="createChannel">+ Add</button>
+						<button v-on:click="createChannel" v-bind:disabled="disableChannelInput">+ Add</button>
 					</section>
 				</main>
 			</div>
