@@ -20,10 +20,12 @@ const findFeedURL = async (url) => {
 	const urlContents = await getURLContents(url);
 	const dom = new JSDOM(urlContents);
 
-	let feedURL =
-		dom.window.document.querySelector("link[type='application/rss+xml']").href ??
-		dom.window.document.querySelector("link[type='application/atom+xml']").href;
-	if (!feedURL) return;
+	const feedTag =
+		dom.window.document.querySelector("link[type='application/rss+xml']") ??
+		dom.window.document.querySelector("link[type='application/atom+xml']");
+
+	if (!feedTag) return;
+	let feedURL = feedTag.href;
 	if (!feedURL.startsWith("http")) {
 		feedURL = new URL(feedURL, url).href;
 	}
