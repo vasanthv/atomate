@@ -5,6 +5,7 @@
 	"main": "init.js",
 	"scripts": {
 		"start": "node init.js",
+		"postinstall": "node postinstall.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [
