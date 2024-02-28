@@ -82,6 +82,9 @@ const App = Vue.createApp({
 			if (interval > 1) return Math.floor(interval) + "m";
 			return "now";
 		},
+		avatar(name) {
+			return `https://ui-avatars.com/api/?background=555&color=fff&size=32&name=${name}`;
+		},
 		toggleSearchField() {
 			this.searchQuery = "";
 			this.showSearchField = !this.showSearchField;

@@ -103,7 +103,7 @@
 					<section v-if="showItemFeed">
 						<article class="item flex" v-for="(item, i) in items" v-bind:key="item._id">
 							<img
-								v-bind:src="item.channel?.image ? item.channel?.image : 'no-image.svg'"
+								v-bind:src="item.channel?.image ? item.channel?.image : avatar(item.channel.title)"
 								v-bind:alt="item.channel.title"
 								class="atomateAvatar"
 							/>
@@ -128,7 +128,7 @@
 					<section v-if="page === 'channels'">
 						<article class="item flex" v-for="(channel, i) in channels" v-bind:key="channel._id">
 							<img
-								v-bind:src="channel.image ? channel.image : '/no-image.svg'"
+								v-bind:src="channel.image ? channel.image : avatar(channel.title)"
 								v-bind:alt="channel.title"
 								class="atomateAvatar"
 							/>
