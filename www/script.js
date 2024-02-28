@@ -49,7 +49,7 @@ const App = Vue.createApp({
 			}
 		},
 		showSearch() {
-			return ["home", "channels", "channel"].includes(this.page);
+			return ["home", "channel"].includes(this.page);
 		},
 		showItemFeed() {
 			return ["home", "channel"].includes(this.page);
