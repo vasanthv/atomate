@@ -83,7 +83,7 @@ const App = Vue.createApp({
 			return "now";
 		},
 		avatar(name) {
-			return `https://ui-avatars.com/api/?background=555&color=fff&size=32&name=${name}`;
+			return `https://ui-avatars.com/api/?background=000&color=fff&size=32&name=${name}`;
 		},
 		toggleSearchField() {
 			this.searchQuery = "";
