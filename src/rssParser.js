@@ -21,7 +21,13 @@ const rssParser = (data, feedURL) => {
 		description: channel.description ?? "",
 		link,
 		feedURL,
-		image: channel.image ? channel.image.url : channel["itunes:image"] ? channel["itunes:image"].href : "",
+		image: channel.icon
+			? channel.icon
+			: channel.image
+			? channel.image.url
+			: channel["itunes:image"]
+			? channel["itunes:image"].href
+			: "",
 		items,
 	};
 
@@ -46,6 +52,10 @@ const rssParser = (data, feedURL) => {
 			content: item.content && item.content.$text ? item.content.$text : item["content:encoded"],
 			enclosures: item.enclosure ? (Array.isArray(item.enclosure) ? item.enclosure : [item.enclosure]) : [],
 		};
+
+		if (Array.isArray(obj.author)) {
+			obj.author = obj.author.join(",");
+		}
 
 		if (item["media:thumbnail"]) {
 			Object.assign(media, { thumbnail: item["media:thumbnail"] });

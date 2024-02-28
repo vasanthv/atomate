@@ -38,7 +38,10 @@ const createChannel = async (req, res, next) => {
 		const rssFeed = rssParser(_xmlJSON, inputFeedURL);
 
 		let channel = await utils.getChannel(rssFeed.link);
-		if (channel) return res.json({ message: "Channel details", channel });
+		if (channel) {
+			await utils.saveChannel(rssFeed, channalFetchIntervalInMinutes);
+			return res.json({ message: "Channel details", channel });
+		}
 
 		channel = await utils.saveChannel(rssFeed, channalFetchIntervalInMinutes);
 
