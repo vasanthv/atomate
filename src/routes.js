@@ -1,7 +1,16 @@
+const rateLimiter = require("express-rate-limit");
 const router = require("express").Router();
 const model = require("./model");
 
-router.post("/channels", model.createChannel);
+const limiter = rateLimiter({
+	limit: 10,
+	windowMs: 60 * 60 * 1000, // One hour
+	skipFailedRequests: true,
+	handler: (req, res, next, options) =>
+		res.status(options.statusCode).json({ message: `Too many requests. Try again after 60 minutes` }),
+});
+
+router.post("/channels", limiter, model.createChannel);
 router.get("/channels/:channelId", model.getChannel);
 router.get("/items", model.getItems);
 router.get("/items/:itemId", model.getItem);
