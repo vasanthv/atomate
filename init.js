@@ -8,7 +8,6 @@ const config = require("./config");
 const { initAllChannelsFetch: initScheduler } = require("./src/scheduler");
 const routes = require("./src/routes");
 
-app.set("trust proxy", true);
 app.set("view engine", "ejs");
 
 // Serve vue.js & axios to the browser

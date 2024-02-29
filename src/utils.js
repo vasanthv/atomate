@@ -66,17 +66,21 @@ const getChannel = async (_link) => {
 };
 
 const updateChannelFeed = async (channel) => {
-	const urlContents = await getURLContents(channel.feedURL);
+	try {
+		const urlContents = await getURLContents(channel.feedURL);
 
-	const _xmlJSON = await xmlTOJSON(urlContents);
+		const _xmlJSON = await xmlTOJSON(urlContents);
 
-	const isRssFeed = isRSSFeed(_xmlJSON);
-	if (!isRssFeed) return;
+		const isRssFeed = isRSSFeed(_xmlJSON);
+		if (!isRssFeed) return;
 
-	const rssFeed = rssParser(_xmlJSON, channel.feedURL);
+		const rssFeed = rssParser(_xmlJSON, channel.feedURL);
 
-	await Channels.updateOne({ _id: channel._id }, { lastFetchedOn: new Date() });
-	saveItems(rssFeed.items, channel._id);
+		await Channels.updateOne({ _id: channel._id }, { lastFetchedOn: new Date() });
+		saveItems(rssFeed.items, channel._id);
+	} catch (err) {
+		console.log(err);
+	}
 };
 
 const saveChannel = async (channel, fetchIntervalInMinutes = 60) => {
