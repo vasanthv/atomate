@@ -83,7 +83,7 @@ const App = Vue.createApp({
 			return "now";
 		},
 		avatar(name) {
-			return `https://ui-avatars.com/api/?background=000&color=fff&size=32&name=${name}`;
+			return `https://ui-avatars.com/api/?background=000&color=fff&size=32&name=${name.charAt(0)}`;
 		},
 		toggleSearchField() {
 			this.searchQuery = "";
@@ -101,7 +101,7 @@ const App = Vue.createApp({
 				.post("/api/channels", { input: this.inputURL })
 				.then((response) => {
 					addChannel(response.data.channel);
-					page.redirect("/channels");
+					page.redirect("/");
 				})
 				.finally(() => {
 					this.disableChannelInput = false;

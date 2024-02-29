@@ -9,10 +9,8 @@ const rssParser = (data, feedURL) => {
 	if (Array.isArray(channel)) channel = channel[0];
 
 	let link = channel.link && channel.link.href ? channel.link.href : channel.link;
-	console.log({ link });
 	if (Array.isArray(link)) link = link.find((l) => l.rel === "alternate")?.href;
 
-	console.log(link);
 	let items = channel.item || channel.entry || [];
 	if (items && !Array.isArray(items)) items = [items];
 
@@ -39,7 +37,7 @@ const rssParser = (data, feedURL) => {
 			id: item.guid && item.guid.$text ? item.guid.$text : item.id,
 			title: item.title && item.title.$text ? item.title.$text : item.title,
 			description: item.summary && item.summary.$text ? item.summary.$text : item.description,
-			link: item.link && item.link.href ? item.link.href : item.link,
+			link: item.link?.href ? item.link.href : item.link,
 			author: item.author && item.author.name ? item.author.name : item["dc:creator"],
 			published: item.created
 				? new Date(item.created)

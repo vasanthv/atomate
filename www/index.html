@@ -170,6 +170,19 @@
 						<label for="inputURL" class="bold">Enter feed URL / Website address</label>
 						<input id="inputURL" type="url" placeholder="Eg: https://techcrunch.com" v-model="inputURL" />
 						<button v-on:click="createChannel" v-bind:disabled="disableChannelInput">+ Add</button>
+						<br /><br />
+						<div class="small light">
+							<p>
+								A channel is any public RSS or Atom feed URL. If do not know the RSS or Atom feed of a website or social
+								media profile you want to follow, just share the website or social media account URL, Atomate can find
+								the RSS feed from that. You can add any news website, YouTube channel, Mastodon or BlueSky profiles,
+								etc.
+							</p>
+							<p>
+								If you have any queries or need help feel free to drop a message to my
+								<a href="https://t.me/vasanthv" target="_blank">Telegram</a>.
+							</p>
+						</div>
 					</section>
 				</main>
 			</div>
