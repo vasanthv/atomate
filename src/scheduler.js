@@ -15,14 +15,18 @@ const initAllChannelsFetch = async () => {
 };
 
 const scheduleChannelFetch = (channel) => {
-	console.log(`Job scheduled for ${channel.link}, runs every ${channel.fetchIntervalInMinutes} minutes`);
-	const updateChannelFeed = async () => {
-		console.log(`running the scheduled task for ${channel.link}`);
-		await utils.updateChannelFeed(channel);
-	};
-	cron.schedule(`*/${channel.fetchIntervalInMinutes ?? 60} * * * *`, updateChannelFeed);
-	// always run the fetch while scheduling
-	updateChannelFeed();
+	try {
+		console.log(`Job scheduled for ${channel.link}, runs every ${channel.fetchIntervalInMinutes} minutes`);
+		const updateChannelFeed = async () => {
+			console.log(`running the scheduled task for ${channel.link}`);
+			await utils.updateChannelFeed(channel);
+		};
+		cron.schedule(`*/${channel.fetchIntervalInMinutes ?? 60} * * * *`, updateChannelFeed);
+		// always run the fetch while scheduling
+		updateChannelFeed();
+	} catch (err) {
+		console.error(err);
+	}
 };
 
 module.exports = { initAllChannelsFetch, scheduleChannelFetch };
