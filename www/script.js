@@ -101,7 +101,7 @@ const App = Vue.createApp({
 				.post("/api/channels", { input: this.inputURL })
 				.then((response) => {
 					addChannel(response.data.channel);
-					page.redirect("/");
+					page.redirect("/channels");
 				})
 				.finally(() => {
 					this.disableChannelInput = false;
