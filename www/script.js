@@ -114,6 +114,7 @@ const App = Vue.createApp({
 			}
 		},
 		getChannel(channelId) {
+			this.loading = true;
 			const params = {};
 			params["skip"] = this.items.length;
 			if (this.searchQuery) params["query"] = this.searchQuery;
@@ -121,6 +122,7 @@ const App = Vue.createApp({
 			axios.get(`/api/channels/${channelId}`, { params }).then((response) => {
 				this.channel = response.data.channel;
 				this.setItems(response.data.items);
+				this.loading = false;
 			});
 		},
 		getItems() {
