@@ -149,7 +149,7 @@
 					</section>
 
 					<section v-if="page === 'item'">
-						<article v-if="item._id">
+						<article v-if="item._id" v-on:click="contentLinkClickHandler">
 							<div class="meta small light">
 								<a v-bind:href="'/channels/'+item.channel._id" v-on:click="channel = item.channel">
 									{{item.channel.title}}

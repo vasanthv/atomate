@@ -156,6 +156,13 @@ const App = Vue.createApp({
 				else if (this.page === "channel") this.getChannel(this.channel._id);
 			}
 		},
+		contentLinkClickHandler(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			if (event.target.href) {
+				window.open(event.target.href, "_blank").focus();
+			}
+		},
 	},
 }).mount("#app");
 
