@@ -67,7 +67,7 @@ const getChannel = async (req, res, next) => {
 		const [channel, items] = await Promise.all([
 			Channels.findOne({ _id: channelId }).select("link feedURL title description image").exec(),
 			Items.find(query)
-				.select("id title description content author channel imageUrl publishedOn")
+				.select("id title author channel publishedOn")
 				.populate("channel", "link feedURL title description image")
 				.skip(skip)
 				.limit(50)
