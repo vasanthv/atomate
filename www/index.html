@@ -122,6 +122,8 @@
 							</div>
 						</article>
 
+						<div v-if="loading" class="loader"></div>
+
 						<button id="actionButton" v-on:click="getItems" v-if="showLoadMore">Load more &darr;</button>
 					</section>
 
@@ -164,6 +166,8 @@
 								<button>Open original link &nearr;</button>
 							</a>
 						</article>
+
+						<div v-if="loading" class="loader"></div>
 					</section>
 
 					<section v-if="page === 'addChannel'">

@@ -124,17 +124,21 @@ const App = Vue.createApp({
 			});
 		},
 		getItems() {
+			this.loading = true;
 			const channels = this.channels.map((c) => c._id).join(",");
 			const params = { channels };
 			params["skip"] = this.items.length;
 			if (this.searchQuery) params["query"] = this.searchQuery;
 			axios.get("/api/items", { params }).then((response) => {
 				this.setItems(response.data.items);
+				this.loading = false;
 			});
 		},
 		getItem(itemId) {
+			this.loading = true;
 			axios.get(`/api/items/${itemId}`).then((response) => {
 				this.item = response.data.item;
+				this.loading = false;
 			});
 		},
 		setItems(items) {
