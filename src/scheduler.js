@@ -22,8 +22,12 @@ const scheduleChannelFetch = (channel) => {
 	try {
 		console.log(`Job scheduled for ${channel.link}, runs every ${channel.fetchIntervalInMinutes} minutes`);
 		const updateChannelFeed = async () => {
-			console.log(`running the scheduled task for ${channel.link}`);
-			await utils.updateChannelFeed(channel);
+			try {
+				console.log(`running the scheduled task for ${channel.link}`);
+				await utils.updateChannelFeed(channel);
+			} catch (err) {
+				console.error(err);
+			}
 		};
 		cron.schedule(`*/${channel.fetchIntervalInMinutes ?? 60} * * * *`, updateChannelFeed);
 		// always run the fetch while scheduling
