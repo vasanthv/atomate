@@ -121,12 +121,16 @@ const saveItems = async (rssItems, channelId) => {
 };
 
 const getReadableContent = async (url) => {
-	const dom = await JSDOM.fromURL(url, {});
-	if (!isProbablyReaderable(dom.window.document)) return "";
-	let reader = new Readability(dom.window.document).parse();
-	const DOMPurify = createDOMPurify(dom.window);
+	try {
+		const dom = await JSDOM.fromURL(url, {});
+		if (!isProbablyReaderable(dom.window.document)) return "";
+		let reader = new Readability(dom.window.document).parse();
+		const DOMPurify = createDOMPurify(dom.window);
 
-	return DOMPurify.sanitize(reader.content);
+		return DOMPurify.sanitize(reader.content);
+	} catch (err) {
+		console.error("Unable to get readable content.", url);
+	}
 };
 
 //Throws a error which can be handled and changed to HTTP Error in the Express js Error handling middleware.
