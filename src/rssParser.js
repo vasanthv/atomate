@@ -54,6 +54,9 @@ const rssParser = (data, feedURL) => {
 		if (Array.isArray(obj.author)) {
 			obj.author = obj.author.join(",");
 		}
+		if (typeof obj.author !== "string") {
+			obj.author = "";
+		}
 
 		if (Array.isArray(obj.link)) {
 			obj.link = obj.link.find((l) => l.rel === "alternate")?.href;
