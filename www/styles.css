@@ -172,6 +172,9 @@ article img.atomateAvatar {
 	margin-top: 0.5rem;
 	border-radius: 0.5rem;
 }
+article img {
+	height: auto;
+}
 article .meta a {
 	color: inherit;
 }
