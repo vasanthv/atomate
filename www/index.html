@@ -149,7 +149,7 @@
 					</section>
 
 					<section v-if="page === 'item'">
-						<article v-if="item._id" v-on:click="contentLinkClickHandler">
+						<article v-if="item._id">
 							<div class="meta small light">
 								<a v-bind:href="'/channels/'+item.channel._id" v-on:click="channel = item.channel">
 									{{item.channel.title}}
@@ -160,7 +160,7 @@
 								</span>
 								<span v-if="item.author"> &middot; {{item.author}}</span>
 							</div>
-							<div v-html="item.content ?? item.description"></div>
+							<div v-html="item.content ?? item.description" v-on:click="contentLinkClickHandler"></div>
 							<br />
 							<a v-bind:href="item.link" id="actionButton" target="_blank">
 								<button>Open original link &nearr;</button>

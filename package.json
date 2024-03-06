@@ -1,6 +1,6 @@
 {
 	"name": "atomate",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "A free RSS or Atom reader for the web",
 	"main": "init.js",
 	"scripts": {
