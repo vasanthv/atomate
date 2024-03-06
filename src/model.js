@@ -91,7 +91,7 @@ const getItems = async (req, res, next) => {
 		if (searchString) query["$text"] = { $search: searchString };
 
 		const items = await Items.find(query)
-			.select("id title author channel publishedOn")
+			.select("id title link author channel publishedOn")
 			.populate("channel", "title description image")
 			.skip(skip)
 			.limit(50)
@@ -109,7 +109,7 @@ const getItem = async (req, res, next) => {
 		const itemId = req.params.itemId;
 
 		const item = await Items.findOne({ _id: itemId })
-			.select("id title description content author channel imageUrl publishedOn")
+			.select("id title link description content author channel imageUrl publishedOn")
 			.populate("channel", "link feedURL title description image")
 			.exec();
 
